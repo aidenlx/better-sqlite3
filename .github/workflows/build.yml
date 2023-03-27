@@ -34,8 +34,6 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-18.04
-          - macos-latest
           - windows-2019
     name: Prebuild on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -45,12 +43,9 @@ jobs:
         with:
           node-version: 16
       - run: npm i -g @electron/rebuild@^3.2.10
-      - run: |
-          for ver in 18.0.0 21.0.0 22.0.0; do electron-rebuild -v $ver; done;
-        shell: bash
       - if: matrix.os == 'windows-2019'
         run: |
-          for ver in 18.0.0 21.0.0 22.0.0; do electron-rebuild -v $ver --arch ia32; done;
+          for ver in 18.0.0 21.0.0 22.0.0; do electron-rebuild -v $ver --arch arm64; done;
         shell: bash
       - if: matrix.os == 'macos-latest'
         run: |
