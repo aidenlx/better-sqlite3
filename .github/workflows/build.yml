@@ -46,16 +46,16 @@ jobs:
           node-version: 16
       - run: npm i -g @electron/rebuild@^3.2.10
       - run: |
-          for ver in 18.0.0 21.0.0 22.0.0 24.0.0; do electron-rebuild -v $ver; done;
+          for ver in 18.0.0 21.0.0 22.0.0 24.0.0 25.0.0; do electron-rebuild -v $ver; done;
         shell: bash
       - if: matrix.os == 'windows-2019'
         run: |
-          for ver in 18.0.0 21.0.0 22.0.0 24.0.0; do electron-rebuild -v $ver --arch ia32; done;
-          for ver in 18.0.0 21.0.0 22.0.0 24.0.0; do electron-rebuild -v $ver --arch arm64; done;
+          for ver in 18.0.0 21.0.0 22.0.0 24.0.0 25.0.0; do electron-rebuild -v $ver --arch ia32; done;
+          for ver in 18.0.0 21.0.0 22.0.0 24.0.0 25.0.0; do electron-rebuild -v $ver --arch arm64; done;
         shell: bash
       - if: matrix.os == 'macos-latest'
         run: |
-          for ver in 18.0.0 21.0.0 22.0.0 24.0.0; do electron-rebuild -v $ver --arch arm64; done;
+          for ver in 18.0.0 21.0.0 22.0.0 24.0.0 25.0.0; do electron-rebuild -v $ver --arch arm64; done;
         shell: bash
       - run: |
           for dir in bin/*/; do gzip -c $dir/better-sqlite3.node > ${dir%/*}.node.gz; done;
