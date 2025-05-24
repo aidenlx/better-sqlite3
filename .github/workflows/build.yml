@@ -16,65 +16,6 @@ env:
   ELECTRON_BUILD_CMD: npx --no-install prebuild -r electron -t 29.0.0 -t 30.0.0 -t 31.0.0 -t 32.0.0 -t 33.0.0 -t 34.0.0 -t 35.0.0 -t 36.0.0 --include-regex 'better_sqlite3.node$'
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        os:
-          - ubuntu-22.04
-          - macos-13
-          - macos-14
-          - windows-2019
-        node:
-          - 20
-          - 22
-          - 23
-          - 24
-    name: Testing Node ${{ matrix.node }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-      - if: ${{ startsWith(matrix.os, 'windows') }}
-        run: pip.exe install setuptools
-      - if: ${{ startsWith(matrix.os, 'macos') }}
-        run: brew install python-setuptools
-      - if: ${{ !startsWith(matrix.os, 'windows') && !startsWith(matrix.os, 'macos') }}
-        run: python3 -m pip install setuptools
-      - if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: |
-          sudo apt update
-          sudo apt install gcc-10 g++-10 -y
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
-      - run: npm install --ignore-scripts
-      - run: npm run build-debug
-      - run: npm test
-      - name: Test SpatiaLite extension
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: |
-          sudo apt update
-          sudo apt install libsqlite3-mod-spatialite -y
-          node -e "require('./lib/index.js')(':memory:').loadExtension('mod_spatialite').exec('SELECT InitSpatialMetaData();')"
-
-  publish:
-    if: ${{ github.event_name == 'release' }}
-    name: Publishing to NPM
-    runs-on: ubuntu-22.04
-    needs:
-      - prebuild
-      - prebuild-linux-x64
-      - prebuild-linux-arm
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
   prebuild:
     strategy:
       fail-fast: false
